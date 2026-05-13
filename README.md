@@ -9,6 +9,14 @@ root@yakutia:~$ cat README.md
 
 ---
 
+## → скриншоты
+
+![screen-1](public/screens/screen-1.png)
+![screen-2](public/screens/screen-2.png)
+![screen-3](public/screens/screen-3.png)
+
+---
+
 ## → как это работает
 
 - Нажми «отметиться на карте» и заполни форму
@@ -28,4 +36,4 @@ root@yakutia:~$ cat README.md
 
 ## → ссылки
 
-- [GitHub](https://github.com/iindev-solutions/yktcoders-worldmap)
+- [GitHub](https://github.com/yokithaiii/yktcoders-worldmap)

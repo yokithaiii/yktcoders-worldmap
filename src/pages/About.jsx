@@ -46,7 +46,7 @@ export default function About() {
 
         <Section title="ссылки">
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <ExtLink href="https://github.com/iindev-solutions/yktcoders-worldmap">GitHub</ExtLink>
+            <ExtLink href="https://github.com/yokithaiii/yktcoders-worldmap">GitHub</ExtLink>
           </div>
         </Section>
 

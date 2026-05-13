@@ -103,6 +103,7 @@ export default function WorldMap() {
     () => localStorage.getItem("useMock") === "true" || import.meta.env.VITE_USE_MOCK === "true"
   );
   const [showGlobe, setShowGlobe] = useState(false);
+  const [zenMode, setZenMode] = useState(false);
 
   const toggleGlobe = () => {
     setLoading(true);
@@ -308,6 +309,17 @@ export default function WorldMap() {
     if (!mapReadyRef.current) return;
     drawMarkers(getVisible(allCoders, activeSpecs), currentZoomKRef.current);
   }, [allCoders, activeSpecs, drawMarkers]);
+
+  // Zen пульсация
+  useEffect(() => {
+    const g = gRef.current;
+    if (!g) return;
+    if (zenMode) {
+      g.selectAll(".marker").classed("zen-marker", true);
+    } else {
+      g.selectAll(".marker").classed("zen-marker", false);
+    }
+  }, [zenMode]);
 
   // Поиск
   useEffect(() => {
@@ -604,6 +616,16 @@ export default function WorldMap() {
         .spec-btn.active span {
           color: #000 !important;
         }
+        @keyframes zenPulse {
+          0%, 100% { opacity: 1; r: 5px; }
+          50% { opacity: 0.4; r: 7px; }
+        }
+        .zen-marker {
+          animation: zenPulse 3s ease-in-out infinite;
+        }
+        .zen-cluster circle {
+          animation: zenPulse 3s ease-in-out infinite;
+        }
       `}</style>
       <svg ref={svgRef} style={{ display: showGlobe ? "none" : "block" }} />
       {showGlobe && (
@@ -629,7 +651,7 @@ export default function WorldMap() {
       )}
 
       {/* Левая панель */}
-      <div style={{ position: "absolute", top: isMobile ? 14 : 28, left: isMobile ? 14 : 36, fontFamily: FONT }}>
+      {!zenMode && <div style={{ position: "absolute", top: isMobile ? 14 : 28, left: isMobile ? 14 : 36, fontFamily: FONT }}>
         <div style={{ fontSize: isMobile ? 9 : 11, color: ACCENT, marginBottom: 4, pointerEvents: "none", userSelect: "none" }}>
           root@yakutia:~$ ./map --show coders
         </div>
@@ -669,10 +691,10 @@ export default function WorldMap() {
         }}>
           → отметиться на карте
         </button>
-      </div>
+      </div>}
 
       {/* Верхняя центральная панель */}
-      <div style={{
+      {!zenMode && <div style={{
         position: "absolute", top: isMobile ? 14 : 28, left: "50%", transform: "translateX(-50%)",
         display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
         fontFamily: FONT, fontSize: isMobile ? 10 : 11, zIndex: 10,
@@ -694,10 +716,17 @@ export default function WorldMap() {
         }}>
           {showGlobe ? "● globe" : "○ globe"}
         </button>
-      </div>
+        <button onClick={() => setZenMode((v) => !v)} style={{
+          background: "none", border: "none", padding: 0,
+          color: zenMode ? ACCENT : "#444",
+          fontFamily: FONT, fontSize: "inherit", cursor: "pointer", letterSpacing: "0.05em",
+        }}>
+          {zenMode ? "● zen" : "○ zen"}
+        </button>
+      </div>}
 
       {/* Поиск */}
-      <div style={{
+      {!zenMode && <div style={{
         position: "absolute",
         ...(isMobile
           ? { bottom: 60, left: "50%", transform: "translateX(-50%)", width: "80vw" }
@@ -738,10 +767,10 @@ export default function WorldMap() {
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
       {/* Фильтр по специализации */}
-      <div style={{
+      {!zenMode && <div style={{
         position: "absolute", bottom: isMobile ? 110 : 28, left: "50%", transform: "translateX(-50%)",
         display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap", justifyContent: "center",
         fontFamily: FONT, maxWidth: "90vw",
@@ -762,9 +791,19 @@ export default function WorldMap() {
             <span style={{ color: "inherit" }}>{spec}</span>
           </button>
         ))}
-      </div>
+      </div>}
 
-      <Modal data={modal} onClose={() => setModal(null)} />
+      {/* Zen выход — ESC или кнопка */}
+      {zenMode && (
+        <button onClick={() => setZenMode(false)} style={{
+          position: "absolute", top: 16, right: 16,
+          background: "none", border: "none", padding: 0,
+          color: "#333", fontFamily: FONT, fontSize: 11,
+          cursor: "pointer", letterSpacing: "0.05em", zIndex: 10,
+        }}>
+          ○ zen
+        </button>
+      )}
       {showRegister && (
         <RegisterModal
           onClose={() => setShowRegister(false)}
